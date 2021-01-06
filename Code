@@ -44,10 +44,7 @@ final_join <- inner_join(impressions_join, advertiser_join, by = "campaign_id")
 view(final_join)
 
 ggplot(data = final_join, aes(x = AdvertiserName, y = budget)) +
-+     geom_bar(stat="identity", width=0.3, fill = "red") + ggtitle("Budget for Advertisers")
-
-ggplot(data = final_join, aes(x = name, y = budget)) +
-+     geom_bar(stat="identity", width=0.3, fill = "orange") + ggtitle("Budget for Campaigns")
++     geom_bar(stat="identity", width=0.3, fill = "orange") + ggtitle("Budget for Advertisers")
 
 ggplot(data = final_join) + geom_point(mapping = aes(x = name, y = clicks_time)) + ggtitle("Time of Clicks for Campaigns")
 
