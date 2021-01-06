@@ -1,0 +1,62 @@
+install.packages("tidyverse")
+library(tibble)
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+setwd("C:/Users/david/Downloads/dataset")
+
+Advertiser <- read_csv("C:/Users/david/Downloads/dataset/advertiser.csv")
+Campaigns <- read_csv("C:/Users/david/Downloads/dataset/campaigns.csv")
+Clicks <- read_csv("C:/Users/david/Downloads/dataset/clicks.csv")
+Conversions <- read_csv("C:/Users/david/Downloads/dataset/conversions.csv")
+Impressions <- read_csv("C:/Users/david/Downloads/dataset/impressions.csv")
+
+advertiser.tibble <- tibble(read_csv("C:/Users/david/Downloads/dataset/advertiser.csv"))
+campaigns.tibble <- tibble(read_csv("C:/Users/david/Downloads/dataset/campaigns.csv"))
+clicks.tibble <- tibble(read_csv("C:/Users/david/Downloads/dataset/clicks.csv"))
+conversions.tibble <- tibble(read_csv("C:/Users/david/Downloads/dataset/conversions.csv"))
+impressions.tibble <- tibble(read_csv("C:/Users/david/Downloads/dataset/impressions.csv"))
+
+names(advertiser.tibble)[names(advertiser.tibble) == "ID"] <- "advertiser_id"
+names(advertiser.tibble)[names(advertiser.tibble) == "name"] <- "AdvertiserName"
+
+names(clicks.tibble)[names(clicks.tibble) == "date"] <- "clicks_date"
+names(clicks.tibble)[names(clicks.tibble) == "time"] <- "clicks_time"
+names(clicks.tibble)[names(clicks.tibble) == "timezone"] <- "clicks_timezone"
+
+names(impressions.tibble)[names(impressions.tibble) == "date"] <- "impressions_date"
+names(impressions.tibble)[names(impressions.tibble) == "time"] <- "impressions_time"
+names(impressions.tibble)[names(impressions.tibble) == "timezone"] <- "impressions_timezone"
+
+names(conversions.tibble)[names(conversions.tibble) == "date"] <- "impressions_date"
+names(conversions.tibble)[names(conversions.tibble) == "time"] <- "impressions_time"
+names(conversions.tibble)[names(conversions.tibble) == "timezone"] <- "impressions_timezone"
+
+advertiser_join <- inner_join(advertiser.tibble, campaigns.tibble, by = "advertiser_id")
+clicks_join <- inner_join(conversions.tibble, clicks.tibble, key = "id")
+impressions_join <- inner_join(clicks.tibble, impressions.tibble, key = "id")
+
+names(advertiser_join)[names(advertiser_join) == "id"] <- "campaign_id"
+
+final_join <- inner_join(impressions_join, advertiser_join, by = "campaign_id") 
+
+view(final_join)
+
+ggplot(data = final_join, aes(x = AdvertiserName, y = budget)) +
++     geom_bar(stat="identity", width=0.3, fill = "red") + ggtitle("Budget for Advertisers")
+
+ggplot(data = final_join, aes(x = name, y = budget)) +
++     geom_bar(stat="identity", width=0.3, fill = "orange") + ggtitle("Budget for Campaigns")
+
+ggplot(data = final_join) + geom_point(mapping = aes(x = name, y = clicks_time)) + ggtitle("Time of Clicks for Campaigns")
+
+ggplot(data = final_join) + geom_point(mapping = aes(x = name, y = impressions_time)) + ggtitle("Time of Impressions for Campaigns")
+
+ggplot(data = final_join) + geom_jitter(mapping = aes(x = impressions_date, y = clicks_date, colour = impressions_date)) + ggtitle("Click Dates vs Impression Dates")
+
+ggplot(data = final_join) + geom_jitter(mapping = aes(x = AdvertiserName, y = clicks_timezone, colour = AdvertiserName)) + ggtitle("Time Zone of Clicks for Advertisements")
+
+ggplot(data = final_join) + geom_jitter(mapping = aes(x = AdvertiserName, y = impressions_timezone, colour = AdvertiserName)) + ggtitle("Time Zone of Impressions for Advertisements")
+
+
